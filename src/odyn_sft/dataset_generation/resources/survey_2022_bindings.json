@@ -1,0 +1,296 @@
+{
+  "version": "survey-bindings-1",
+  "study_id": "quant-data-example-2022",
+  "groups": [
+    {
+      "variable": "dem_ww_age_dm_l_v1_14072020_tgt_none",
+      "groups": {
+        "18-34": [
+          "18-24",
+          "25-34"
+        ],
+        "55+": [
+          "55-64",
+          "65 and above"
+        ]
+      }
+    },
+    {
+      "variable": "dem_ww_age_dm_l_v1_14072020_tgt_none",
+      "groups": {
+        "18-24": [
+          "18-24"
+        ],
+        "65 and above": [
+          "65 and above"
+        ]
+      }
+    },
+    {
+      "variable": "dem_ww_gender_rb_l_v3_14072020_tgt_none",
+      "groups": {
+        "Female": [
+          "Female"
+        ],
+        "Male": [
+          "Male"
+        ]
+      }
+    },
+    {
+      "variable": "sbeh_ww_trfreq_rb_07062021_none",
+      "groups": {
+        "Frequent travellers": [
+          "Multiple times a year"
+        ],
+        "Less frequent travellers": [
+          "Once a year or about once a year",
+          "Less than once a year"
+        ]
+      }
+    },
+    {
+      "variable": "dem_ww_settlement_rb_s_v1_cint_24072020_none",
+      "groups": {
+        "Urban": [
+          "Urban"
+        ],
+        "Rural": [
+          "Rural"
+        ]
+      }
+    },
+    {
+      "variable": "dem_usa_state_dm_l_v1_27052021_tgt_none",
+      "groups": {
+        "Florida": [
+          "Florida"
+        ],
+        "California": [
+          "California"
+        ]
+      }
+    },
+    {
+      "variable": "dem_usa_state_dm_l_v1_27052021_tgt_none",
+      "groups": {
+        "Alaska": [
+          "Alaska"
+        ],
+        "Florida": [
+          "Florida"
+        ]
+      }
+    },
+    {
+      "variable": "dem_ww_age_dm_l_v1_14072020_tgt_none",
+      "groups": {
+        "35-54": [
+          "35-44",
+          "45-54"
+        ],
+        "55+": [
+          "55-64",
+          "65 and above"
+        ]
+      }
+    },
+    {
+      "variable": "dem_ww_age_dm_l_v1_14072020_tgt_none",
+      "groups": {
+        "Under 45": [
+          "18-24",
+          "25-34",
+          "35-44"
+        ],
+        "45+": [
+          "45-54",
+          "55-64",
+          "65 and above"
+        ]
+      }
+    },
+    {
+      "variable": "dem_ww_age_dm_l_v1_14072020_tgt_none",
+      "groups": {
+        "25-44": [
+          "25-34",
+          "35-44"
+        ],
+        "55+": [
+          "55-64",
+          "65 and above"
+        ]
+      }
+    },
+    {
+      "variable": "sbeh_ww_trfreq_rb_07062021_none",
+      "groups": {
+        "Annual travellers": [
+          "Once a year or about once a year"
+        ],
+        "Less than annual": [
+          "Less than once a year"
+        ]
+      }
+    },
+    {
+      "variable": "dem_ww_settlement_rb_s_v1_cint_24072020_none",
+      "groups": {
+        "Suburban": [
+          "Suburban"
+        ],
+        "Urban": [
+          "Urban"
+        ]
+      }
+    },
+    {
+      "variable": "dem_ww_settlement_rb_s_v1_cint_24072020_none",
+      "groups": {
+        "Suburban": [
+          "Suburban"
+        ],
+        "Rural": [
+          "Rural"
+        ]
+      }
+    },
+    {
+      "variable": "dem_usa_state_dm_l_v1_27052021_tgt_none",
+      "groups": {
+        "Texas": [
+          "Texas"
+        ],
+        "New York": [
+          "New York"
+        ]
+      }
+    },
+    {
+      "variable": "dem_usa_state_dm_l_v1_27052021_tgt_none",
+      "groups": {
+        "California or New York": [
+          "California",
+          "New York"
+        ],
+        "Florida or Texas": [
+          "Florida",
+          "Texas"
+        ]
+      }
+    },
+    {
+      "variable": "dem_us_eth_dm_s_v2_14072020_none",
+      "groups": {
+        "White": [
+          "White"
+        ],
+        "Black or African American": [
+          "Black or African American"
+        ]
+      }
+    },
+    {
+      "variable": "dem_us_eth_dm_s_v2_14072020_none",
+      "groups": {
+        "Hispanic or Latino": [
+          "Hispanic or Latino"
+        ],
+        "White": [
+          "White"
+        ]
+      }
+    },
+    {
+      "variable": "dem_ww_generation_rb_s_v1_14012021_none",
+      "groups": {
+        "Millennials": [
+          "Millennials"
+        ],
+        "Baby boomers": [
+          "Baby boomers"
+        ]
+      }
+    },
+    {
+      "variable": "dem_ww_generation_rb_s_v1_14012021_none",
+      "groups": {
+        "Generation X": [
+          "Generation X"
+        ],
+        "Baby boomers": [
+          "Baby boomers"
+        ]
+      }
+    },
+    {
+      "variable": "soc_ww_edu_dm_s_v1_14072020_tgt_none",
+      "groups": {
+        "University education": [
+          "University/Higher Education - Undergraduate Education",
+          "University - Postgraduate Education"
+        ],
+        "School or college": [
+          "High School/Tertiary/Tech. College/College",
+          "Secondary School",
+          "Primary School",
+          "None completed"
+        ]
+      }
+    },
+    {
+      "variable": "soc_us_ih_dm_l_v5_16072020_none",
+      "groups": {
+        "Household income $100k+": [
+          "$100,000 - $149,999",
+          "$150,000 - $249,999",
+          "$250,000 - $499,999",
+          "$500,000 or more"
+        ],
+        "Household income below $50k": [
+          "No income",
+          "$1 - $24,999",
+          "$25,000 - $49,999"
+        ]
+      }
+    },
+    {
+      "variable": "soc_ww_es_dm_s_v2_07012021_tgt_none",
+      "groups": {
+        "Full-time employed": [
+          "Full-time work in the private sector",
+          "Full-time work in the public sector"
+        ],
+        "Retired": [
+          "Retired"
+        ]
+      }
+    },
+    {
+      "variable": "soc_ww_hh_rb_l_v1_15072020_none",
+      "groups": {
+        "Owned house": [
+          "Owned house"
+        ],
+        "Rented house": [
+          "Rented house"
+        ]
+      }
+    },
+    {
+      "variable": "dem_ww_ch_rb_l_v1_16072020_tgt_none",
+      "groups": {
+        "No children": [
+          "None"
+        ],
+        "Has children": [
+          "Yes, one child",
+          "Yes, two children",
+          "Yes, three children",
+          "Yes, four or more children"
+        ]
+      }
+    }
+  ]
+}

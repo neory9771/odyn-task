@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "odyn-survey-sft"
+version = "2.0.0"
+description = "Shared single-GPU PyTorch LoRA training for evidence analysis and response synthesis"
+requires-python = ">=3.11"
+dependencies = [
+  "torch==2.9.1", "transformers==4.57.3", "peft==0.18.0",
+  "bitsandbytes==0.49.2", "accelerate==1.12.0", "tensorboard==2.20.0",
+  "pandas>=2.2,<4", "numpy>=2,<3", "pyarrow>=18,<26",
+  "scipy>=1.15,<2", "statsmodels>=0.14,<1", "pydantic>=2,<3"
+]
+
+[project.optional-dependencies]
+dataset = ["tiktoken>=0.12,<1"]
+tracking = ["wandb==0.30.0"]
+judge = ["openai==2.54.0"]
+test = ["pytest>=8,<10"]
+
+[project.scripts]
+odyn-sft = "odyn_sft.run_management.cli:main"
+odyn-dataset = "odyn_sft.dataset_generation.cli:main"
+odyn-infer = "odyn_sft.inference.cli:main"
+odyn-e2e = "odyn_sft.inference.e2e:main"
+odyn-judge = "odyn_sft.survey_evaluation.synthesis_cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+odyn_sft = ["py.typed"]
+"odyn_sft.dataset_generation" = ["resources/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

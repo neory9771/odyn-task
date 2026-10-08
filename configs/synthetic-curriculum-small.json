@@ -1,0 +1,11 @@
+{
+  "seed": 20261007,
+  "counts": {"train": 100, "validation": 20, "test": 30},
+  "tutorial_fraction": 0.2,
+  "cases_per_study": 10,
+  "widths": [20, 64],
+  "population_size": 20000,
+  "max_context_tokens": 32768,
+  "client_calibration_size": 0,
+  "client_pool_limit": 0
+}
