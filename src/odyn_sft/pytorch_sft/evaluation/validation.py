@@ -119,7 +119,7 @@ def _evaluate_validation(config: Config, *, use_adapter: bool) -> dict[str, Any]
             parameter.data = parameter.data.to(dtype=torch.bfloat16)
     model.config.use_cache = True
 
-    settings = replace(config, validation_generation=True)
+    settings = replace(config, validation_generation=True, generation_check_examples=None)
     dataset = TokenDataset(Path(config.prepared), "validation")
     writer = SummaryWriter(str(Path(config.output) / "tensorboard"))
     try:

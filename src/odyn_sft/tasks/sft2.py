@@ -19,6 +19,7 @@ class SynthesisTask:
     scope = 'Step 2 response generation; semantic grounding and perspective quality require a separate calibrated judge'
     diagnostic_scope = 'Response-generation diagnostic; no semantic judge was run and checkpoint selection is unchanged.'
     comparison_metrics = ('loss', 'nonempty_response_rate', 'generated_output_rate')
+    selection_rate = 'generated_output_rate'
 
     def record_path(self, suite: Path, split: str, *, inputs: bool = False) -> Path:
         if split != 'test':

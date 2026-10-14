@@ -103,7 +103,7 @@ def run_training(
             if state['global_step'] >= plan.planned_steps:
                 raise ValueError('Shortened schedule is already exhausted by the parent updates')
             reconcile_shortened_schedule(components.optimizer, components.scheduler)
-        state["validated"], state["best_loss"] = [], None
+        state["validated"], state["best_loss"], state["best_key"] = [], None, None
         print(
             json.dumps(
                 {

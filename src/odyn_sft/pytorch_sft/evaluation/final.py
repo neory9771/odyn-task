@@ -134,7 +134,7 @@ def evaluate_final(config: Config) -> dict[str, Any]:
         "generation_max_new_tokens": config.generation_max_new_tokens,
         "generation_do_sample": False,
         "inference_precision": f"BF16 norms and frozen adapters; {config.base_weight_precision()} base",
-        "selection_metric": "validation completion loss among learned adapters",
+        "selection_metric": config.selection_description() + " among learned adapters",
         "test_used_for_selection": False,
         "llm_api_calls": 0,
     }
@@ -184,7 +184,7 @@ def evaluate_final(config: Config) -> dict[str, Any]:
             if "lora_" in name:
                 parameter.data = parameter.data.to(dtype=torch.bfloat16)
         model.config.use_cache = True
-        settings = replace(config, validation_generation=True)
+        settings = replace(config, validation_generation=True, generation_check_examples=None)
         writer = SummaryWriter(str(Path(config.output) / "tensorboard"))
         try:
             results = {}

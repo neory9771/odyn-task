@@ -58,6 +58,12 @@ class Config:
     minimum_lr_ratio: float = 0.0
     validation_fractions: tuple[float, ...] = (0.25, 0.5, 0.75, 1.0)
     validation_generation: bool = True
+    # Generate and score this fixed, evenly spaced validation subset at every
+    # boundary while full-set validation stays loss-only. None disables it.
+    generation_check_examples: int | None = None
+    # "loss": lowest full validation loss. "generated": highest task generated
+    # rate (SFT1 success, SFT2 finished within budget), ties broken by loss.
+    selection_metric: str = "loss"
     continuation_from: str | None = None
     generation_max_new_tokens: int = 1536
     generation_do_sample: bool = False
@@ -127,6 +133,15 @@ class Config:
             raise ValueError("Validation uses deterministic greedy generation")
         if type(self.validation_generation) is not bool:
             raise ValueError("validation_generation must be a boolean")
+        if self.generation_check_examples is not None:
+            if type(self.generation_check_examples) is not int or self.generation_check_examples < 1:
+                raise ValueError("generation_check_examples must be a positive integer or None")
+            if self.validation_generation:
+                raise ValueError("generation_check_examples applies only to loss-only validation")
+        if self.selection_metric not in {"loss", "generated"}:
+            raise ValueError("selection_metric must be loss or generated")
+        if self.selection_metric == "generated" and not self.generates_during_training():
+            raise ValueError("Generated selection needs validation_generation or generation_check_examples")
         if self.continuation_from is not None and not isinstance(self.continuation_from, str):
             raise ValueError("continuation_from must name a parent training directory")
         if tuple(self.validation_fractions) != (0.25, 0.5, 0.75, 1.0):
@@ -164,6 +179,16 @@ class Config:
                 raise ValueError(f"Invalid {name}")
         if len(self.revision) != 40 or any(c not in "0123456789abcdef" for c in self.revision):
             raise ValueError("Pin the model to a full commit SHA")
+
+    def generates_during_training(self) -> bool:
+        return self.validation_generation or self.generation_check_examples is not None
+
+    def selection_description(self) -> str:
+        if self.selection_metric == "loss":
+            return "minimum full validation completion loss"
+        scope = "full validation" if self.validation_generation else (
+            f"{self.generation_check_examples}-example generated validation subset")
+        return f"maximum task generated rate on {scope}; ties by minimum full validation loss"
 
     def as_dict(self) -> dict[str, Any]:
         return asdict(self)

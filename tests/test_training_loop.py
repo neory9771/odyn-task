@@ -41,7 +41,7 @@ class SavedTokenizer:
         (Path(directory) / "tokenizer_config.json").write_text("{}")
 
 
-def make_session(directory, monkeypatch, *, resume=False, stop=lambda: False):
+def make_session(directory, monkeypatch, *, resume=False, stop=lambda: False, **overrides):
     from peft import LoraConfig, get_peft_model
     from transformers import Qwen2Config, Qwen2ForCausalLM
 
@@ -67,6 +67,7 @@ def make_session(directory, monkeypatch, *, resume=False, stop=lambda: False):
         lora_dropout=0.1,
         max_length=128,
         loss_chunk_tokens=4,
+        **overrides,
     )
     train, val = TokenDataset(prepared, "train"), TokenDataset(prepared, "validation")
     plan = RunPlan(
@@ -243,3 +244,48 @@ def test_bootstrap_uses_real_setup_and_model_helpers_without_gpu_download(tmp_pa
     assert manifest["effective"]["total_optimizer_updates"] == 12
     assert manifest["quantization"]["quant_method"] == "none"
     assert read_json(Path(config.output) / "first_update_verification.json")["passed"]
+
+
+def test_generated_selection_prefers_generated_rate_over_lower_loss(tmp_path, monkeypatch):
+    """Loss rises while the generated rate improves: only generated selection follows quality."""
+    calls = {"loss": 0, "generated": 0}
+
+    def fake_evaluate(model, tokenizer, dataset, config, device, output, tag, stop, fingerprint):
+        if config.validation_generation:
+            calls["generated"] += 1
+            assert tag.endswith("-generated") and len(dataset) == 1
+            return {"loss": 9.0, "examples": 1, "generated_output_rate": min(calls["generated"], 6) / 6}
+        calls["loss"] += 1
+        return {"loss": 1.0 + calls["loss"] / 100, "examples": len(dataset)}
+
+    monkeypatch.setattr("odyn_sft.pytorch_sft.training.selection.evaluate", fake_evaluate)
+    session = make_session(
+        tmp_path, monkeypatch, generation_check_examples=1, selection_metric="generated"
+    )
+    try:
+        summary = fit(session)
+    finally:
+        session.logs.close()
+    assert summary["acceptance_checks"]["passed"] and calls == {"loss": 12, "generated": 12}
+    selection = read_json(tmp_path / "best_adapter/selection.json")
+    # First boundary reaching rate 1.0 wins; later ties lose on their higher full-set loss.
+    assert selection["tag"] == "epoch-2-examples-0004"
+    assert selection["loss"] == pytest.approx(1.06)
+    assert selection["selection_key"] == [-1.0, pytest.approx(1.06)]
+    assert selection["generation_check"]["examples"] == 1
+
+
+def test_generated_selection_requires_generation_and_subset_is_fixed(tmp_path):
+    config = load_config(ROOT / "configs/mistral-sft2-bf16.json")
+    with pytest.raises(ValueError, match="Generated selection needs"):
+        replace(config, validation_generation=False, selection_metric="generated")
+    with pytest.raises(ValueError, match="only to loss-only"):
+        replace(config, validation_generation=True, generation_check_examples=4)
+    prepared = tmp_path / "prepared"
+    prepared.mkdir()
+    np.zeros(10 * 4, dtype=np.int32).tofile(prepared / "validation.tokens.bin")
+    np.save(prepared / "validation.offsets.npy", np.arange(11, dtype=np.int64) * 4)
+    np.save(prepared / "validation.prompts.npy", np.full(10, 2, dtype=np.int32))
+    data = TokenDataset(prepared, "validation")
+    assert data.subset(4).indices == [0, 2, 5, 7] == data.subset(4).indices
+    assert data.subset(20).indices == data.indices and len(data) == 10

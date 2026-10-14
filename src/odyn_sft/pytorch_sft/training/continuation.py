@@ -49,6 +49,8 @@ def continuation_checkpoint(
         "thermal_log",
         "max_length",
         "validation_generation",
+        "generation_check_examples",
+        "selection_metric",
         "continuation_from",
     }
     shortened = new['epochs'] < old['epochs']

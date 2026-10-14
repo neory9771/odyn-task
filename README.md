@@ -110,7 +110,7 @@ Groups must be disjoint. The refusal value `Prefer not to say` is rejected.
 |---|---|
 | `resolved_config.json`, `run_manifest.json` | Effective settings, model revision, data and code hashes |
 | `checkpoint-*` | Adapter, optimizer, scheduler, RNG and sampler position |
-| `best_adapter/` + `selection.json` | Lowest validation-loss adapter that has learned |
+| `best_adapter/` + `selection.json` | Learned adapter chosen by `selection_metric`: lowest validation loss (default) or highest generated rate on the `generation_check_examples` subset |
 | `adapter/`, `training_summary.json` | Final adapter and acceptance checks |
 | `validation/<tag>/` | Per-quarter validation loss |
 | `generated_validation_*`, `final_evaluation/` | Generated-output reports (validate / test) |

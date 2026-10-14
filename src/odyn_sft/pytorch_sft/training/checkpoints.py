@@ -22,6 +22,7 @@ class TrainingState(TypedDict):
     position: int
     validated: list[str]
     best_loss: float | None
+    best_key: NotRequired[list[float] | None]
     nonzero_lr_updates: NotRequired[int]
     first_update_has_learned_delta: NotRequired[bool]
 

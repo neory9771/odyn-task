@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 from pathlib import Path
 from typing import Any
 
@@ -28,6 +29,13 @@ class TokenDataset:
 
     def __len__(self) -> int:
         return len(self.indices)
+
+    def subset(self, count: int) -> "TokenDataset":
+        """Fixed, evenly spaced examples so every checkpoint sees the same cases."""
+        view = copy.copy(self)
+        if count < len(self.indices):
+            view.indices = [self.indices[int(i * len(self.indices) / count)] for i in range(count)]
+        return view
 
     def __getitem__(self, index: int) -> dict[str, Any]:
         import torch
