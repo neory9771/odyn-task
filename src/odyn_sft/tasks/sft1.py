@@ -41,6 +41,7 @@ class AnalysisTask:
     view = 'analysis'
     scope = 'Step 1 code; measured semantics exclude gap/proxy meaning requiring expert/judge review'
     diagnostic_scope = 'Generated-code diagnostic; does not change checkpoint selection.'
+    selection_rate = 'generated_success_rate'
     comparison_metrics = ('loss', 'syntax_valid_rate', 'execution_valid_rate',
                           'measured_semantic_pass_rate', 'generated_success_rate')
 

@@ -28,6 +28,8 @@ class TaskAdapter(Protocol):
     scope: str
     diagnostic_scope: str
     comparison_metrics: tuple[str, ...]
+    # Generated-output rate maximised by selection_metric="generated".
+    selection_rate: str
 
     def validate_suite(self, suite: Path) -> dict[str, Any]: ...
     def record_path(self, suite: Path, split: str, *, inputs: bool = False) -> Path: ...

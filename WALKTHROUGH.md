@@ -202,6 +202,12 @@ Key behaviours to explain to a client:
   An adapter that has not moved from its initial state cannot be selected.
   Validation loss is a training signal. Generated-output quality is measured separately (section 6),
   and the best-loss checkpoint is not always the best generator.
+- **Generated selection (optional).** Set `generation_check_examples` (for example 200) to also generate
+  and score a fixed, evenly spaced validation subset at every boundary, under `validation/<tag>-generated/`.
+  With `selection_metric: "generated"`, `best_adapter` maximises the task rate on that subset
+  (SFT1 `generated_success_rate`: parses, executes and meets the contract; SFT2 `generated_output_rate`:
+  nonempty and ends with EOS within budget), ties broken by full validation loss.
+  The default `selection_metric: "loss"` keeps the previous behaviour.
 - **Safe stop and resume.** SIGTERM or Ctrl-C sets a flag. The loop saves at the next window boundary and exits with code 75.
   A half-finished window is discarded and its RNG state restored, so the resumed run replays it exactly.
   Rerunning the training command with the same frozen config resumes. A fresh-run

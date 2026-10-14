@@ -127,7 +127,11 @@ def load_training_components(plan: RunPlan) -> TrainingComponents:
         raise ValueError("BF16-base LoRA requires BF16 base weights")
     if config.max_length > model.config.max_position_embeddings:
         raise ValueError("Requested context exceeds the model's supported positions")
-    for dataset in (plan.train_data, plan.val_data) if config.validation_generation else ():
+    generated = (
+        (plan.train_data, plan.val_data) if config.validation_generation
+        else (plan.val_data,) if config.generation_check_examples else ()
+    )
+    for dataset in generated:
         if int(max(dataset.prompts)) + config.generation_max_new_tokens > config.max_length:
             raise ValueError("Prompt plus validation generation budget exceeds context")
     model.config.use_cache = False
