@@ -118,6 +118,7 @@ Dataset manifests record file hashes and versions.
 | Command | Code | What it produces |
 |---|---|---|
 | `synthetic curriculum/validate-curriculum/filter` | `synthetic/` | Seeded surveys, paired SFT1/SFT2 curricula and metadata-filtered subsets |
+| `synthetic assemble` | `synthetic/assemble.py` | `synthetic-client-sft-1` trainer package from a curriculum, client-only test |
 | `metadata build` | `metadata.py`, `ordering.py` | Study metadata JSON from the downloaded survey |
 | `evaluation audit/generate` | `generation/` | Client-evaluation cases: claim, reference program, gold |
 | `splits audit/generate/validate` | `dataset/`, `partition.py`, `selection.py` | Paired train/validation/test package |

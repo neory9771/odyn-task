@@ -177,6 +177,7 @@ implementation imports until execution, keeping help lightweight.
 | Command | Purpose | OpenAI calls |
 |---|---|---|
 | `synthetic curriculum/validate-curriculum/filter` | Build/check seeded paired curricula and select small experiments | No |
+| `synthetic assemble` | Package a curriculum as `synthetic-client-sft-1` with a client-only test split | No |
 | `metadata build` | Build metadata from a downloaded survey | No |
 | `evaluation audit/generate` | Plan/render client evaluation candidates | No |
 | `splits audit/generate/validate` | Plan, build and validate paired packages | No |
@@ -208,6 +209,8 @@ odyn-dataset synthetic curriculum --config configs/synthetic-curriculum-small.js
 odyn-dataset synthetic validate-curriculum --run data/synthetic-small
 odyn-dataset synthetic filter --run data/synthetic-small --split train \
     --limit 10 --task-type api_tutorial --output data/api-lessons
+odyn-dataset synthetic assemble --run data/synthetic-curriculum \
+    --config data/synthetic-curriculum/config.json --output data/sft1-suite --test-count 1000
 ```
 
 The first curriculum build may download the small `o200k_base` tokenizer
@@ -220,9 +223,12 @@ benchmark; `curriculum`/`validate-curriculum` create/check paired curricula;
 `filter` exports aligned subsets, and `resume-client` finishes optional client
 drafts from a partial build. None calls an LLM. Outputs refuse overwrites.
 Raw curriculum manifests use their own schema: validation here checks generation,
-not acceptance by the SFT task loader. Reviewed rows must be assembled into a
-supported trainer package before fitting; generating a curriculum does not
-launch training or replace an existing production dataset.
+not acceptance by the SFT task loader. `assemble` turns a validated curriculum into
+the trainer package `synthetic-client-sft-1`: it copies train/validation (study files
+are hard-linked), writes `validation_private_gold.jsonl`, replaces the test split with
+client-only cases selected from `client_data`/`client_metadata` in the config, and
+checks the result with the SFT1 suite validator. The output feeds `odyn-sft prepare`
+and `synthesis export`. Generating or assembling a curriculum does not launch training.
 
 The supplied-study workflow is metadata → audit → review plan → generate →
 validate. Audit may execute candidate reference analyses to check feasibility,
