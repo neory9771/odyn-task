@@ -39,6 +39,12 @@ def configure_parser(parser: argparse.ArgumentParser) -> None:
     resume.add_argument('--config',required=True)
     resume.add_argument('--partial-run',required=True)
     resume.add_argument('--output',required=True)
+    assembled = sub.add_parser('assemble', help='Package a curriculum as synthetic-client-sft-1 with a client-only test split')
+    assembled.add_argument('--run', required=True, help='Validated synthetic-curriculum-1.0.0 build')
+    assembled.add_argument('--config', required=True, help='Curriculum config naming client_data/client_metadata, e.g. <run>/config.json')
+    assembled.add_argument('--output', required=True)
+    assembled.add_argument('--test-count', type=int, default=1000)
+    assembled.add_argument('--smoke', action='store_true', help='Small client inventory without coverage minima')
     curriculum_check = sub.add_parser('validate-curriculum', help='Check hashes, counts, alignment and isolation')
     curriculum_check.add_argument('--run', required=True)
     filtered = sub.add_parser('filter', help='Export an aligned small experiment from curriculum metadata')
@@ -80,6 +86,10 @@ def dispatch(args: argparse.Namespace) -> dict[str, Any]:
     elif args.action == 'resume-client':
         from .curriculum import resume_client
         result = resume_client(args.config,args.partial_run,args.output,lambda event:print(json.dumps(event),file=sys.stderr,flush=True))
+    elif args.action == 'assemble':
+        from .assemble import assemble
+        result = assemble(args.run,args.config,args.output,test_count=args.test_count,smoke=args.smoke,
+            progress=lambda event:print(json.dumps(event),file=sys.stderr,flush=True))
     elif args.action == 'validate-curriculum':
         from .curriculum import validate
         result = validate(args.run)

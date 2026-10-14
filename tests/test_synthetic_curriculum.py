@@ -159,3 +159,42 @@ def test_budget_failure_does_not_publish(tmp_path):
         build(config,tmp_path/'run')
     assert not (tmp_path/'run').exists()
     assert (tmp_path/'run.partial').exists()
+
+
+def fake_client_test(root, config, size, *, smoke=False, progress=None):
+    """Minimal client-only test split; real selection needs the client survey."""
+    from odyn_sft.common.storage import write_jsonl
+    lineage = [{'record_id':f'client_{i}','study_id':'client','source':'client_2022','split':'test',
+                'family_id':f'client_family_{i}','component_keys':[f'client_key_{i}']} for i in range(size)]
+    rows = [{'instruction':'i','input':'x','output':'e = 1','metadata':item} for item in lineage]
+    write_jsonl(root/'test_lineage.jsonl',lineage)
+    write_jsonl(root/'test_analysis_gold.jsonl',rows)
+    write_jsonl(root/'test_analysis_inputs.jsonl',[{k:v for k,v in r.items() if k!='output'} for r in rows])
+
+
+def test_assemble_packages_curriculum_for_trainer(package,tmp_path,monkeypatch):
+    from odyn_sft.dataset_generation.synthetic import assemble as module
+    from odyn_sft.tasks import get_task
+    monkeypatch.setattr(module,'build_client_test',fake_client_test)
+    source_manifest = read_json(package/'manifest.json')
+    result = module.assemble(package,package/'config.json',tmp_path/'suite',test_count=2)
+    suite = Path(result['output'])
+    assert get_task('sft1').validate_suite(suite)['counts']=={'train':30,'validation':30,'test':2}
+    assert read_json(suite/'synthetic_manifest.json')==source_manifest
+    gold = list(iter_rows(suite/'validation_private_gold.jsonl'))
+    assert len(gold)==30 and {r['metadata']['split'] for r in gold}=={'validation'}
+    study = next((suite/'studies').glob('*/study/respondents.parquet'))
+    assert study.stat().st_nlink==2
+    assert validate(package)['cases']==90
+    with pytest.raises(ValueError,match='fresh output'):
+        module.assemble(package,package/'config.json',suite)
+
+
+def test_failed_assemble_leaves_no_staging(package,tmp_path,monkeypatch):
+    from odyn_sft.dataset_generation.synthetic import assemble as module
+    def fail(*args,**kwargs):
+        raise ValueError('Client test coverage/capacity insufficient')
+    monkeypatch.setattr(module,'build_client_test',fail)
+    with pytest.raises(ValueError,match='capacity'):
+        module.assemble(package,package/'config.json',tmp_path/'suite')
+    assert not (tmp_path/'suite').exists() and not (tmp_path/'suite.partial').exists()
